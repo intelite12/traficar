@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,30 +7,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <title>Traficar Service</title>
     <style>
-        :root { --purple: #7419AF; --light: #F5F5F5; --text: #000; }
-        body { font-family: 'Montserrat', sans-serif; background: #FFF; margin: 0; padding: 20px; color: var(--text); -webkit-font-smoothing: antialiased; }
-        h2 { font-weight: 800; font-size: 24px; margin: 0 0 20px 0; letter-spacing: -0.5px; }
+        :root { --purple: #7419AF; --light: #F5F5F5; }
+        body { font-family: 'Montserrat', sans-serif; background: #FFF; margin: 0; padding: 20px; color: #000; -webkit-tap-highlight-color: transparent; }
         
-        .header-stats { margin-bottom: 30px; }
-        .money-today { font-size: 28px; font-weight: 800; }
-        .holiday-badge { display: inline-block; background: #FFD700; font-size: 10px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-top: 5px; }
+        /* Статистика */
+        .money-today { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+        .holiday-badge { display: inline-block; background: #FFD700; font-size: 10px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-bottom: 20px; }
 
-        input[type="text"] { width: 100%; padding: 18px; border: 1px solid #E0E0E0; border-radius: 15px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px; font-family: 'Montserrat'; background: var(--light); }
+        h2 { font-weight: 800; font-size: 24px; margin: 0 0 15px 0; }
+        input { width: 100%; padding: 18px; border: 1px solid #E0E0E0; border-radius: 15px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px; font-family: 'Montserrat'; background: var(--light); }
+        
         .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .opt { background: var(--light); padding: 15px 5px; border-radius: 15px; text-align: center; font-size: 10px; font-weight: 700; color: #666; }
-        .opt input { transform: scale(1.2); margin-bottom: 8px; }
+        .opt { background: var(--light); padding: 15px 5px; border-radius: 12px; text-align: center; font-size: 10px; font-weight: 700; color: #666; }
+        .opt input { display: block; margin: 0 auto 8px; transform: scale(1.3); }
         
-        button { font-family: 'Montserrat'; border: none; cursor: pointer; transition: opacity 0.2s; width: 100%; }
-        button:active { opacity: 0.7; }
+        button { font-family: 'Montserrat'; border: none; cursor: pointer; width: 100%; transition: 0.2s; outline: none; }
         .main-btn { background: var(--purple); color: white; padding: 20px; border-radius: 40px; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
-        .secondary-btn { background: var(--light); color: var(--text); padding: 18px; border-radius: 40px; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
+        .secondary-btn { background: var(--light); color: #000; padding: 18px; border-radius: 40px; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
 
-        /* ЭКРАН ПОДТВЕРЖДЕНИЯ */
-        #confirmScreen { 
-            display: none; 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: white; z-index: 9999; padding: 40px 20px; box-sizing: border-box; 
-        }
+        /* Экран подтверждения */
+        #confirmScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; padding: 40px 20px; box-sizing: border-box; }
         .info-table { width: 100%; margin: 30px 0; border-spacing: 0 15px; }
         .info-table td { font-size: 14px; vertical-align: top; }
         .info-table td:first-child { font-weight: 700; color: #999; width: 35%; }
@@ -38,422 +34,433 @@
         /* История */
         .date-header { font-size: 12px; color: #999; font-weight: 700; margin: 30px 0 10px; text-transform: uppercase; }
         .log-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #EEE; }
-        .earn-text { color: #27AE60; font-weight: 800; font-size: 16px; }
+        .earn-green { color: #27AE60; font-weight: 800; font-size: 16px; }
         
-        .settings-panel { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #EEE; }
+        #settingsPanel { display: none; margin-top: 20px; padding: 20px; border: 1px solid #EEE; border-radius: 15px; }
     </style>
 </head>
 <body>
 
 <div id="confirmScreen">
-    <h2>Детали маршрута</h2>
+    <h2 id="confTitle">Szczegóły trasy</h2>
     <table class="info-table">
-        <tr><td>📍 Адрес</td><td id="confAddress"></td></tr>
-        <tr><td>💬 Коммент</td><td id="confComent"></td></tr>
-        <tr><td>🕒 Работает</td><td id="confHours"></td></tr>
+        <tr><td>📍 Adres</td><td id="confAddress"></td></tr>
+        <tr><td>💬 Koment</td><td id="confComent"></td></tr>
+        <tr><td>🕒 Godziny</td><td id="confHours"></td></tr>
     </table>
-    <button class="main-btn" onclick="confirmAndGo()">NAWIGUJ</button>
-    <button class="secondary-btn" onclick="findWork(true)">СЛЕДУЮЩИЙ ВАРИАНТ</button>
-    <button class="secondary-btn" style="background:none; color:#999" onclick="closeConfirm()">ОТМЕНА</button>
+    <button class="main-btn" id="btnNawiguj">NAWIGUJ</button>
+    <button class="secondary-btn" id="btnNext">KOLEJNY WARIANT</button>
+    <button class="secondary-btn" style="background:none; color:#999" id="btnCancel">ANULUJ</button>
 </div>
 
-<div id="appUI">
-    <div class="header-stats">
-        <div style="font-size: 12px; font-weight: 700; color: #999; margin-bottom: 5px;">ZAROBEK DZISIAJ:</div>
-        <div class="money-today" id="todaySum">0 PLN</div>
-        <div id="holidayIndicator" class="holiday-badge">ПРАЗДНИЧНАЯ СТАВКА</div>
-    </div>
+<div id="appBody">
+    <div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase;">Zarobek dzisiaj:</div>
+    <div class="money-today" id="totalCash">0 PLN</div>
+    <div id="holidayLabel" class="holiday-badge" style="display:none;">STAWKA ŚWIĄTECZNA</div>
 
-    <h2>Zlecenia</h2>
-    <input type="text" id="carNumber" placeholder="Numer rejestracyjny" autocomplete="off">
+    <h2 style="margin-top: 10px;">Zlecenia</h2>
+    <input type="text" id="carInput" placeholder="Numer rejestracyjny" autocomplete="off">
     
     <div class="grid-options">
-        <div class="opt"><input type="checkbox" id="petrol" checked><br>FUEL</div>
-        <div class="opt"><input type="checkbox" id="vacuum"><br>VACUUM</div>
-        <div class="opt"><input type="checkbox" id="wash"><br>WASH</div>
+        <div class="opt"><input type="checkbox" id="checkFuel" checked>FUEL</div>
+        <div class="opt"><input type="checkbox" id="checkVacuum">VACUUM</div>
+        <div class="opt"><input type="checkbox" id="checkWash">WASH</div>
     </div>
 
-    <button class="main-btn" onclick="findWork(false)">ZNAJDŹ ORLEN</button>
+    <button class="main-btn" id="btnSearch">ZNAJDŹ ORLEN</button>
     
     <div style="text-align: center;">
-        <button onclick="toggleSettings()" style="background:none; color:#CCC; font-size:11px; font-weight:700; padding: 10px;">USTAWIENIA</button>
+        <button id="btnSettingsToggle" style="background:none; color:#CCC; font-size:11px; font-weight:700; padding:10px; width:auto;">USTAWIENIA</button>
     </div>
 
-    <div id="settings" class="settings-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <span style="font-weight:700; font-size:14px">Праздничная ставка (+7)</span>
-            <input type="checkbox" id="holidayToggle" onchange="toggleHoliday()" style="transform: scale(1.5);">
+    <div id="settingsPanel">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; font-size:14px">Stawka świąteczna (+7)</span>
+            <input type="checkbox" id="holidaySwitch" style="width:auto; margin:0; transform: scale(1.5);">
         </div>
-        <button class="secondary-btn" style="width:100%" onclick="toggleSettings()">ЗАКРЫТЬ</button>
     </div>
 
-    <div id="historyList"></div>
+    <div id="historyContainer"></div>
 </div>
 
 <script>
-    const orlenData = [
-{
-"ID": "WAW01",
-"adress": "Wawrzyńca Surowieckiego 14, 02-784 Warszawa",
-"coordinates": "52.15716068344515, 21.02050067721268",
-"coor_lat": "52.15716068",
-"coor_lon": "21.02050067721268",
-"coment": "Камили",
-"vacuum": 1,
-"wash": 1,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW02",
-"adress": "Śródziemnomorska 65, 02-758 Warszawa",
-"coordinates": "52.176713638604205, 21.04534754055634",
-"coor_lat": "52.17671363",
-"coor_lon": "21.04534754055634",
-"coment": "Чарноморска",
-"vacuum": 1,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW03",
-"adress": "Migdałowa 2, 02-796 Warszawa",
-"coordinates": "52.14800023386855, 21.05961734835411",
-"coor_lat": "52.14800023",
-"coor_lon": "21.05961734835411",
-"coment": "Безполезная",
-"vacuum": 0,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW04",
-"adress": "Antoniego Malczewskiego 1, 02-617 Warszawa",
-"coordinates": "52.194595855724714, 21.02387832793719",
-"coor_lat": "52.19459585",
-"coor_lon": "21.02387832793719",
-"coment": "Puławska маленькая",
-"vacuum": 0,
-"wash": 0,
-"petrol": 1,
-"open_hours": "06:00 - 22:00"
-},
-{
-"ID": "WAW05",
-"adress": "aleja Wyścigowa 2, 02-681 Warszawa",
-"coordinates": "52.16590022123692, 21.015788481766005",
-"coor_lat": "52.16590022",
-"coor_lon": "21.015788481766005",
-"coment": "Wyscigowa",
-"vacuum": 0,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW06",
-"adress": "Postępu 16, 02-676 Warszawa",
-"coordinates": "52.18052375829466, 20.99809104977135",
-"coor_lat": "52.18052375",
-"coor_lon": "20.99809104977135",
-"coment": "Postępu",
-"vacuum": 1,
-"wash": 1,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW07",
-"adress": "Wołoska 28, 02-675 Warszawa",
-"coordinates": "52.187237761269685, 21.002754807137908",
-"coor_lat": "52.18723776",
-"coor_lon": "21.002754807137908",
-"coment": "Wołoska (Димка)",
-"vacuum": 1,
-"wash": 1,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW08",
-"adress": "Bolesława Limanowskiego 25, 02-943 Warszawa",
-"coordinates": "52.18793911918503, 21.050364441799985",
-"coor_lat": "52.18793911",
-"coor_lon": "21.050364441799985",
-"coment": "Mangalia",
-"vacuum": 1,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW09",
-"adress": "Powsińska 14, 02-920 Warszawa",
-"coordinates": "52.180786475098955, 21.070798542125665",
-"coor_lat": "52.18078647",
-"coor_lon": "21.070798542125665",
-"coment": "Powśinska",
-"vacuum": 1,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW10",
-"adress": "Dolna 1, 00-773 Warszawa",
-"coordinates": "52.201580434638444, 21.034454851665153",
-"coor_lat": "52.20158043",
-"coor_lon": "21.034454851665153",
-"coment": "Dolna",
-"vacuum": 0,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW11",
-"adress": "Jamesa Gordona Bennetta 2A, 02-159 Warszawa",
-"coordinates": "52.167852765493066, 20.97893344781403",
-"coor_lat": "52.16785276",
-"coor_lon": "20.97893344781403",
-"coment": "Lotnisko",
-"vacuum": 1,
-"wash": 1,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW12",
-"adress": "Franciszka Hynka 2, 02-149 Warszawa",
-"coordinates": "52.18625203047114, 20.970966082694563",
-"coor_lat": "52.18625203",
-"coor_lon": "20.970966082694563",
-"coment": "Hynka",
-"vacuum": 1,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW13",
-"adress": "Rakowiecka 38, 02-532 Warszawa",
-"coordinates": "52.20630316384648, 21.00011178747195",
-"coor_lat": "52.20630316",
-"coor_lon": "21.00011178747195",
-"coment": "Rakowiecka",
-"vacuum": 0,
-"wash": 0,
-"petrol": 0,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW14",
-"adress": "Polna 1A, 00-622 Warszawa",
-"coordinates": "52.214293628193026, 21.020214153908643",
-"coor_lat": "52.21429362",
-"coor_lon": "21.020214153908643",
-"coment": "Polna",
-"vacuum": 0,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW15",
-"adress": "al. Niepodległości 206, 00-608 Warszawa",
-"coordinates": "52.21531281369555, 21.006234350626702",
-"coor_lat": "52.21531281",
-"coor_lon": "21.006234350626702",
-"coment": "Niepodległości",
-"vacuum": 0,
-"wash": 0,
-"petrol": 0,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW16",
-"adress": "Czerniakowska 149A, 00-453 Warszawa",
-"coordinates": "52.21291801599098, 21.046224298246074",
-"coor_lat": "52.21291801",
-"coor_lon": "21.046224298246074",
-"coment": "Александра",
-"vacuum": 1,
-"wash": 1,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW17",
-"adress": "Al. 3 Maja 1A, 00-401 Warszawa",
-"coordinates": "52.234668161034634, 21.03606967010209",
-"coor_lat": "52.23466816",
-"coor_lon": "21.03606967010209",
-"coment": "3 Maja",
-"vacuum": 0,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-},
-{
-"ID": "WAW18",
-"adress": "Wawelska 3B, 02-034 Warszawa",
-"coordinates": "52.21670048671269, 20.998587244653738",
-"coor_lat": "52.21670048",
-"coor_lon": "20.998587244653738",
-"coment": "Wawelska",
-"vacuum": 1,
-"wash": 0,
-"petrol": 1,
-"open_hours": "00:00 - 23:59"
-}
+    // ВСТРОЕННЫЕ ДАННЫЕ ИЗ ВАШЕЙ ТАБЛИЦЫ[cite: 1]
+    const stations = [
+  {
+    id: 'WAW01',
+    addr: 'Wawrzyńca Surowieckiego 14, 02-784 Warszawa',
+    coordinates: '52.15716068344515, 21.02050067721268',
+    lat: 52.15716068,
+    lon: 21.02050067721268,
+    com: 'Камили',
+    vac: 1,
+    wash: 1,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW02',
+    addr: 'Śródziemnomorska 65, 02-758 Warszawa',
+    coordinates: '52.176713638604205, 21.04534754055634',
+    lat: 52.17671363,
+    lon: 21.04534754055634,
+    com: 'Чарноморска',
+    vac: 1,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW03',
+    addr: 'Migdałowa 2, 02-796 Warszawa',
+    coordinates: '52.14800023386855, 21.05961734835411',
+    lat: 52.14800023,
+    lon: 21.05961734835411,
+    com: 'Безполезная',
+    vac: 0,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW04',
+    addr: 'Antoniego Malczewskiego 1, 02-617 Warszawa',
+    coordinates: '52.194595855724714, 21.02387832793719',
+    lat: 52.19459585,
+    lon: 21.02387832793719,
+    com: 'Puławska маленькая',
+    vac: 0,
+    wash: 0,
+    petrol: 1,
+    hours: '06:00 - 22:00',
+  },
+  {
+    id: 'WAW05',
+    addr: 'aleja Wyścigowa 2, 02-681 Warszawa',
+    coordinates: '52.16590022123692, 21.015788481766005',
+    lat: 52.16590022,
+    lon: 21.015788481766005,
+    com: 'Wyscigowa',
+    vac: 0,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW06',
+    addr: 'Postępu 16, 02-676 Warszawa',
+    coordinates: '52.18052375829466, 20.99809104977135',
+    lat: 52.18052375,
+    lon: 20.99809104977135,
+    com: 'Postępu',
+    vac: 1,
+    wash: 1,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW07',
+    addr: 'Wołoska 28, 02-675 Warszawa',
+    coordinates: '52.187237761269685, 21.002754807137908',
+    lat: 52.18723776,
+    lon: 21.002754807137908,
+    com: 'Wołoska (Димка)',
+    vac: 1,
+    wash: 1,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW08',
+    addr: 'Bolesława Limanowskiego 25, 02-943 Warszawa',
+    coordinates: '52.18793911918503, 21.050364441799985',
+    lat: 52.18793911,
+    lon: 21.050364441799985,
+    com: 'Mangalia',
+    vac: 1,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW09',
+    addr: 'Powsińska 14, 02-920 Warszawa',
+    coordinates: '52.180786475098955, 21.070798542125665',
+    lat: 52.18078647,
+    lon: 21.070798542125665,
+    com: 'Powśinska',
+    vac: 1,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW10',
+    addr: 'Dolna 1, 00-773 Warszawa',
+    coordinates: '52.201580434638444, 21.034454851665153',
+    lat: 52.20158043,
+    lon: 21.034454851665153,
+    com: 'Dolna',
+    vac: 0,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW11',
+    addr: 'Jamesa Gordona Bennetta 2A, 02-159 Warszawa',
+    coordinates: '52.167852765493066, 20.97893344781403',
+    lat: 52.16785276,
+    lon: 20.97893344781403,
+    com: 'Lotnisko',
+    vac: 1,
+    wash: 1,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW12',
+    addr: 'Franciszka Hynka 2, 02-149 Warszawa',
+    coordinates: '52.18625203047114, 20.970966082694563',
+    lat: 52.18625203,
+    lon: 20.970966082694563,
+    com: 'Hynka',
+    vac: 1,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW13',
+    addr: 'Rakowiecka 38, 02-532 Warszawa',
+    coordinates: '52.20630316384648, 21.00011178747195',
+    lat: 52.20630316,
+    lon: 21.00011178747195,
+    com: 'Rakowiecka',
+    vac: 0,
+    wash: 0,
+    petrol: 0,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW14',
+    addr: 'Polna 1A, 00-622 Warszawa',
+    coordinates: '52.214293628193026, 21.020214153908643',
+    lat: 52.21429362,
+    lon: 21.020214153908643,
+    com: 'Polna',
+    vac: 0,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW15',
+    addr: 'al. Niepodległości 206, 00-608 Warszawa',
+    coordinates: '52.21531281369555, 21.006234350626702',
+    lat: 52.21531281,
+    lon: 21.006234350626702,
+    com: 'Niepodległości',
+    vac: 0,
+    wash: 0,
+    petrol: 0,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW16',
+    addr: 'Czerniakowska 149A, 00-453 Warszawa',
+    coordinates: '52.21291801599098, 21.046224298246074',
+    lat: 52.21291801,
+    lon: 21.046224298246074,
+    com: 'Александра',
+    vac: 1,
+    wash: 1,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW17',
+    addr: 'Al. 3 Maja 1A, 00-401 Warszawa',
+    coordinates: '52.234668161034634, 21.03606967010209',
+    lat: 52.23466816,
+    lon: 21.03606967010209,
+    com: '3 Maja',
+    vac: 0,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
+  {
+    id: 'WAW18',
+    addr: 'Wawelska 3B, 02-034 Warszawa',
+    coordinates: '52.21670048671269, 20.998587244653738',
+    lat: 52.21670048,
+    lon: 20.998587244653738,
+    com: 'Wawelska',
+    vac: 1,
+    wash: 0,
+    petrol: 1,
+    hours: '00:00 - 23:59',
+  },
 ];
 
-    let state = { holidayMode: false, lastDate: new Date().toLocaleDateString() };
-    let currentStation = null;
+    let holidayMode = false;
     let excluded = [];
+    let currentStation = null;
 
-    function init() {
-        const saved = JSON.parse(localStorage.getItem('traficar_v5_state'));
+    window.onload = function() {
+        // Управление сессией и ставкой
+        const savedHoliday = localStorage.getItem('holiday_active');
+        const lastDate = localStorage.getItem('last_session_date');
         const today = new Date().toLocaleDateString();
-        if(saved) {
-            state = saved;
-            if(state.lastDate !== today) {
-                state.holidayMode = false;
-                state.lastDate = today;
-                localStorage.setItem('traficar_v5_state', JSON.stringify(state));
-            }
+
+        if (lastDate === today) {
+            holidayMode = savedHoliday === 'true';
+        } else {
+            localStorage.setItem('last_session_date', today);
+            holidayMode = false;
+            localStorage.setItem('holiday_active', 'false');
         }
-        document.getElementById('holidayToggle').checked = state.holidayMode;
-        render();
+
+        document.getElementById('holidaySwitch').checked = holidayMode;
+
+        // Привязка событий к кнопкам
+        document.getElementById('btnSearch').addEventListener('click', function() { findNearest(false); });
+        document.getElementById('btnSettingsToggle').addEventListener('click', toggleSettings);
+        document.getElementById('holidaySwitch').addEventListener('change', updateHoliday);
+        document.getElementById('btnNawiguj').addEventListener('click', startNavigation);
+        document.getElementById('btnNext').addEventListener('click', function() { findNearest(true); });
+        document.getElementById('btnCancel').addEventListener('click', closeConfirm);
+
+        renderHistory();
+    };
+
+    function toggleSettings() {
+        const p = document.getElementById('settingsPanel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
     }
 
-    function isStationOpen(hours) {
+    function updateHoliday() {
+        holidayMode = document.getElementById('holidaySwitch').checked;
+        localStorage.setItem('holiday_active', holidayMode);
+        renderHistory();
+    }
+
+    function isOpen(hStr) {
         try {
             const now = new Date();
             const cur = now.getHours() * 60 + now.getMinutes();
-            const [start, end] = hours.split(' - ').map(t => {
+            const parts = hStr.split(' - ').map(t => {
                 const [h, m] = t.split(':').map(Number);
                 return h * 60 + m;
             });
-            return end < start ? (cur >= start || cur <= end) : (cur >= start && cur <= end);
+            return parts[1] < parts[0] ? (cur >= parts[0] || cur <= parts[1]) : (cur >= parts[0] && cur <= parts[1]);
         } catch(e) { return true; }
     }
 
-    function findWork(isNext) {
-        const car = document.getElementById('carNumber').value.toUpperCase().trim();
-        if(!car) { alert("Введите номер!"); return; }
-        if(!isNext) excluded = [];
+    function findNearest(isNext) {
+        const car = document.getElementById('carInput').value.trim().toUpperCase();
+        if (!car) { alert("Wprowadź numer rejestracyjny!"); return; }
+
+        if (!isNext) excluded = [];
 
         navigator.geolocation.getCurrentPosition(pos => {
             const uLat = pos.coords.latitude;
             const uLon = pos.coords.longitude;
-            const v = document.getElementById('vacuum').checked;
-            const w = document.getElementById('wash').checked;
+            const needV = document.getElementById('checkVacuum').checked;
+            const needW = document.getElementById('checkWash').checked;
 
-            let filtered = orlenData.filter(s => 
-                (!v || s.vacuum === 1) &&[cite: 1]
-                (!w || s.wash === 1) &&[cite: 1]
+            const filtered = stations.filter(s => 
+                (!needV || s.vac === 1) &&[cite: 1]
+                (!needW || s.wash === 1) &&[cite: 1]
                 !excluded.includes(s.id) &&[cite: 1]
-                isStationOpen(s.open_hours)[cite: 1]
+                isOpen(s.hours)[cite: 1]
             );
 
-            if(!filtered.length) {
-                alert("Нет доступных заправок");
-                if(isNext) closeConfirm();
+            if (filtered.length === 0) {
+                alert("Brak dostępnych stacji spełniających kryteria.");
+                if (isNext) closeConfirm();
                 return;
             }
 
             currentStation = filtered.reduce((prev, curr) => 
-                Math.hypot(uLat-prev.lat, uLon-prev.lon) < Math.hypot(uLat-curr.lat, uLon-curr.lon) ? prev : curr
+                Math.hypot(uLat - prev.lat, uLon - prev.lon) < Math.hypot(uLat - curr.lat, uLon - curr.lon) ? prev : curr
             );
 
             excluded.push(currentStation.id);
             
-            document.getElementById('confAddress').innerText = currentStation.adress;
-            document.getElementById('confComent').innerText = currentStation.coment;
-            document.getElementById('confHours').innerText = currentStation.open_hours;
+            document.getElementById('confAddress').innerText = currentStation.addr;
+            document.getElementById('confComent').innerText = currentStation.com;
+            document.getElementById('confHours').innerText = currentStation.hours;
             document.getElementById('confirmScreen').style.display = 'block';
         }, err => {
-            alert("Ошибка геолокации. Проверьте разрешения Safari.");
+            alert("Błąd GPS. Sprawdź uprawnienia w ustawieniach Safari.");
         });
     }
 
-    function confirmAndGo() {
-        if(!currentStation) return;
-        const car = document.getElementById('carNumber').value.toUpperCase().trim();
-        const logs = JSON.parse(localStorage.getItem('traficar_v5_logs') || "[]");
+    function startNavigation() {
+        if (!currentStation) return;
+        const car = document.getElementById('carInput').value.trim().toUpperCase();
+        const logs = JSON.parse(localStorage.getItem('car_logs_v6') || "[]");
         
         logs.unshift({
-            id: Date.now(), 
-            car, 
+            id: Date.now(),
+            car: car,
             date: new Date().toLocaleDateString(),
             time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-            earn: state.holidayMode ? 28 : 21,
-            station: currentStation.coment
+            earn: holidayMode ? 28 : 21,
+            station: currentStation.com
         });
-        
-        localStorage.setItem('traficar_v5_logs', JSON.stringify(logs));
+
+        localStorage.setItem('car_logs_v6', JSON.stringify(logs));
         const url = `https://www.google.com/maps/dir/?api=1&destination=${currentStation.lat},${currentStation.lon}`;
         
-        closeConfirm();
-        render();
+        document.getElementById('confirmScreen').style.display = 'none';
+        renderHistory();
         window.location.href = url;
     }
 
     function closeConfirm() { document.getElementById('confirmScreen').style.display = 'none'; }
-    
-    function toggleSettings() { 
-        const s = document.getElementById('settings');
-        s.style.display = (s.style.display === 'block') ? 'none' : 'block';
-    }
 
-    function toggleHoliday() {
-        state.holidayMode = document.getElementById('holidayToggle').checked;
-        localStorage.setItem('traficar_v5_state', JSON.stringify(state));
-        render();
-    }
-
-    function deleteEntry(id) {
-        if(confirm("Удалить запись?")) {
-            const h = JSON.parse(localStorage.getItem('traficar_v5_logs') || "[]");
-            localStorage.setItem('traficar_v5_logs', JSON.stringify(h.filter(i => i.id !== id)));
-            render();
+    function removeLog(id) {
+        if (confirm("Usunąć wpis?")) {
+            const logs = JSON.parse(localStorage.getItem('car_logs_v6') || "[]");
+            localStorage.setItem('car_logs_v6', JSON.stringify(logs.filter(l => l.id !== id)));
+            renderHistory();
         }
     }
 
-    function render() {
-        const logs = JSON.parse(localStorage.getItem('traficar_v5_logs') || "[]");
+    function renderHistory() {
+        const logs = JSON.parse(localStorage.getItem('car_logs_v6') || "[]");
         const today = new Date().toLocaleDateString();
-        const todayEarn = logs.filter(i => i.date === today).reduce((s, i) => s + i.earn, 0);
-        
-        document.getElementById('todaySum').innerText = todayEarn + " PLN";
-        document.getElementById('holidayIndicator').style.display = state.holidayMode ? 'block' : 'none';
+        const cash = logs.filter(l => l.date === today).reduce((sum, l) => sum + l.earn, 0);
 
-        const groups = logs.reduce((acc, i) => {
-            if(!acc[i.date]) acc[i.date] = [];
-            acc[i.date].push(i);
+        document.getElementById('totalCash').innerText = cash + " PLN";
+        document.getElementById('holidayLabel').style.display = holidayMode ? 'block' : 'none';
+
+        const groups = logs.reduce((acc, l) => {
+            if (!acc[l.date]) acc[l.date] = [];
+            acc[l.date].push(l);
             return acc;
         }, {});
 
         let html = '';
-        for(let date in groups) {
-            html += `<div class="date-header">${date === today ? 'Сегодня' : date}</div>`;
-            html += groups[date].map(i => `
+        const sortedDates = Object.keys(groups).sort((a, b) => new Date(b) - new Date(a));
+        
+        for (let date of sortedDates) {
+            html += `<div class="date-header">${date === today ? 'Dzisiaj' : date}</div>`;
+            html += groups[date].map(l => `
                 <div class="log-item">
-                    <div><strong>${i.car}</strong><br><small>${i.time} • ${i.station}</small></div>
-                    <div style="display:flex; align-items:center">
-                        <span class="earn-text">+${i.earn}</span>
-                        <span style="color:#CCC; margin-left:15px; font-size:20px" onclick="deleteEntry(${i.id})">×</span>
+                    <div><strong>${l.car}</strong><br><small>${l.time} • ${l.station}</small></div>
+                    <div style="display:flex; align-items:center;">
+                        <span class="earn-green">+${l.earn}</span>
+                        <span style="color:#CCC; margin-left:15px; font-size:24px;" onclick="removeLog(${l.id})">×</span>
                     </div>
                 </div>
             `).join('');
         }
-        document.getElementById('historyList').innerHTML = html;
+        document.getElementById('historyContainer').innerHTML = html;
     }
-
-    init();
 </script>
 </body>
 </html>
