@@ -4,205 +4,313 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon.png">
-    <title>Traficar Drive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Traficar Service</title>
     <style>
-        :root { --red: #7419AF; --gold: #ffd700; --bg: #f4f7f6; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 15px; padding-bottom: 50px; }
-        .card { background: white; padding: 15px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        :root { 
+            --traficar-purple: #7419AF; 
+            --traficar-light-gray: #F5F5F5;
+            --text-main: #000000;
+        }
         
-        /* Главный экран: Деньги */
-        .header-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .money-today { font-size: 24px; font-weight: 800; color: #1a1a1a; }
-        .holiday-badge { background: var(--gold); font-size: 10px; padding: 4px 8px; border-radius: 20px; font-weight: bold; display: none; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: #FFFFFF; 
+            margin: 0; 
+            padding: 20px; 
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
 
-        input[type="text"] { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
-        .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .opt { background: #f9f9f9; padding: 10px; border-radius: 10px; text-align: center; font-size: 11px; border: 1px solid #eee; }
+        h2 { font-weight: 800; font-size: 24px; margin-bottom: 20px; letter-spacing: -0.5px; }
         
-        button.main-btn { width: 100%; background: var(--red); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; font-size: 16px; }
-        
-        /* История */
-        .date-group { margin-top: 20px; }
-        .date-header { font-size: 14px; color: #666; font-weight: bold; margin-bottom: 8px; padding-left: 5px; }
-        .log-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-left: 4px solid var(--red); }
-        .log-info { display: flex; flex-direction: column; }
-        .del-btn { background: #fee; color: var(--red); border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
+        /* Статистика сверху */
+        .header-stats { margin-bottom: 30px; }
+        .money-today { font-size: 28px; font-weight: 800; color: var(--text-main); }
+        .holiday-badge { 
+            display: inline-block;
+            background: #FFD700; 
+            font-size: 10px; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-weight: 800; 
+            margin-top: 5px;
+        }
 
-        /* Настройки */
-        .settings-panel { display: none; background: #eee; padding: 15px; border-radius: 12px; margin-top: 15px; }
-        .toggle-btn { padding: 5px 15px; background: white; border: 1px solid #ccc; border-radius: 20px; font-size: 12px; }
-        .toggle-active { background: var(--gold); border-color: var(--gold); }
+        /* Поля ввода и опции */
+        input[type="text"] { 
+            width: 100%; 
+            padding: 18px; 
+            border: 1px solid #E0E0E0; 
+            border-radius: 15px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            margin-bottom: 20px; 
+            font-family: 'Montserrat';
+            background: var(--traficar-light-gray);
+        }
+
+        .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .opt { 
+            background: var(--traficar-light-gray); 
+            padding: 15px 5px; 
+            border-radius: 15px; 
+            text-align: center; 
+            font-size: 10px; 
+            font-weight: 700;
+            color: #666;
+        }
+        .opt input { transform: scale(1.2); margin-bottom: 8px; }
+        
+        /* Кнопки в стиле Traficar */
+        button { font-family: 'Montserrat'; border: none; transition: opacity 0.2s; cursor: pointer; }
+        button:active { opacity: 0.7; }
+
+        .main-btn { 
+            width: 100%; 
+            background: var(--traficar-purple); 
+            color: white; 
+            padding: 20px; 
+            border-radius: 40px; 
+            font-weight: 700; 
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .secondary-btn {
+            background: var(--traficar-light-gray);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Экран подтверждения Orlen */
+        #confirmScreen { 
+            display: none; 
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: white; z-index: 1000; padding: 30px 20px; box-sizing: border-box; 
+        }
+        
+        .info-table { width: 100%; margin: 30px 0; border-spacing: 0 15px; }
+        .info-table td { font-size: 14px; vertical-align: top; }
+        .info-table td:first-child { font-weight: 700; color: #999; width: 35%; }
+        .info-table td:last-child { font-weight: 600; color: #000; }
+
+        /* История сервисов */
+        .date-header { font-size: 12px; color: #999; font-weight: 700; margin: 30px 0 15px; text-transform: uppercase; }
+        .log-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 0; 
+            border-bottom: 1px solid #EEE;
+        }
+        .log-item strong { font-size: 16px; font-weight: 700; }
+        .log-item small { color: #999; font-weight: 600; }
+        .earn-text { color: #27AE60; font-weight: 800; font-size: 16px; }
+        .del-icon { color: #CCC; font-size: 20px; padding-left: 15px; }
+
+        .settings-panel { display: none; margin-top: 20px; border-top: 1px solid #EEE; padding-top: 20px; }
     </style>
 </head>
 <body>
 
+<div id="confirmScreen">
+    <h2>Подходящий Orlen</h2>
+    <table class="info-table">
+        <tr><td>📍 Адрес</td><td id="confAddress"></td></tr>
+        <tr><td>💬 Коммент</td><td id="confComent"></td></tr>
+        <tr><td>🕒 Часы работы</td><td id="confHours"></td></tr>
+    </table>
+    
+    <button class="main-btn" onclick="confirmNavigation()">Nawiguj</button>
+    
+    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+        <button class="secondary-btn" onclick="findWork(true)">Следующий вариант</button>
+        <button class="secondary-btn" style="background:none" onclick="closeConfirm()">Anuluj</button>
+    </div>
+</div>
+
 <div class="header-stats">
-    <div>
-        <div style="font-size: 12px; color: #666;">За сегодня:</div>
-        <div class="money-today" id="todaySum">0 PLN</div>
-    </div>
-    <div id="holidayIndicator" class="holiday-badge">🎄 ПРАЗДНИЧНАЯ СТАВКА</div>
+    <div style="font-size: 12px; font-weight: 700; color: #999; margin-bottom: 5px;">DZISIEJSZY ZAROBEK:</div>
+    <div class="money-today" id="todaySum">0 PLN</div>
+    <div id="holidayIndicator" class="holiday-badge">ПРАЗДНИЧНАЯ СТАВКА</div>
 </div>
 
-<div class="card">
-    <input type="text" id="carNumber" placeholder="Номер авто (KK1234R)..." autocomplete="off">
+<div id="mainForm">
+    <h2>Новое задание</h2>
+    <input type="text" id="carNumber" placeholder="Numer rejestracyjny" autocomplete="off">
+    
     <div class="grid-options">
-        <div class="opt"><input type="checkbox" id="petrol" checked><br>Заправка</div>
-        <div class="opt"><input type="checkbox" id="vacuum"><br>Пылесос</div>
-        <div class="opt"><input type="checkbox" id="wash"><br>Мойка</div>
+        <div class="opt"><input type="checkbox" id="petrol" checked><br>FUEL</div>
+        <div class="opt"><input type="checkbox" id="vacuum"><br>VACUUM</div>
+        <div class="opt"><input type="checkbox" id="wash"><br>WASH</div>
     </div>
-    <button class="main-btn" onclick="startWork()">Найти Orlen и Добавить</button>
+
+    <button class="main-btn" onclick="findWork(false)">Znajdź Orlen</button>
 </div>
 
-<!-- Секция настроек -->
-<div style="text-align: right;">
-    <span onclick="document.getElementById('settings').style.display='block'" style="font-size: 12px; color: #888;">⚙️ Настройки</span>
+<div style="text-align: center; margin-top: 10px;">
+    <button class="secondary-btn" style="background:none; color:#CCC; font-size:11px" onclick="toggleSettings()">Ustawienia</button>
 </div>
+
 <div id="settings" class="settings-panel">
-    <h4 style="margin-top:0">Настройки</h4>
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span>Праздничная ставка (+7 PLN):</span>
-        <button id="holidayToggle" class="toggle-btn" onclick="toggleHoliday()">ВКЛ/ВЫКЛ</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+        <span style="font-weight:700; font-size:14px">Праздничная ставка (+7 PLN)</span>
+        <input type="checkbox" id="holidayToggle" onchange="toggleHoliday()" style="transform: scale(1.5);">
     </div>
-    <button onclick="document.getElementById('settings').style.display='none'" style="margin-top:15px; width:100%; border:none; padding:5px;">Закрыть</button>
+    <button class="secondary-btn" style="width:100%" onclick="toggleSettings()">Закрыть</button>
 </div>
 
 <div id="historyList"></div>
 
 <script>
-    // БАЗА ДАННЫХ (используйте вашу структуру из таблицы)
+    // БАЗА ДАННЫХ
     const orlenData = [
-        { id: "WAW01", adress: "Surowieckiego 14", lat: 52.15716068, lon: 21.02050067, vacuum: 1, wash: 1, coment: "Kamil" },
-        { id: "WAW02", adress: "Śródziemnomorska 65", lat: 52.17671363, lon: 21.04534754, vacuum: 1, wash: 0, coment: "Charnomorska" }
-        // Добавьте остальные свои точки сюда
+        { id: "WAW01", adress: "Wawrzyńca Surowieckiego 14, 02-784 Warszawa", lat: 52.15716068, lon: 21.02050067, vacuum: 1, wash: 1, coment: "Kamil", open_hours: "00:00 - 23:59" },
+        { id: "WAW02", adress: "Śródziemnomorska 65, 02-758 Warszawa", lat: 52.17671363, lon: 21.04534754, vacuum: 1, wash: 0, coment: "Charnomorska", open_hours: "00:00 - 23:59" },
+        { id: "WAW03", adress: "Migdałowa 2, 02-796 Warszawa", lat: 52.14800023, lon: 21.05961734, vacuum: 0, wash: 0, coment: "Bespoleznaya", open_hours: "00:00 - 23:59" },
+        { id: "WAW04", adress: "Antoniego Malczewskiego 1, 02-617 Warszawa", lat: 52.19459585, lon: 21.02387832, vacuum: 0, wash: 0, coment: "Pulawska malenkaja", open_hours: "06:00 - 22:00" },
+        { id: "WAW05", adress: "aleja Wyścigowa 2, 02-681 Warszawa", lat: 52.16590022, lon: 21.01578848, vacuum: 0, wash: 0, coment: "Wyscigowa", open_hours: "00:00 - 23:59" }
     ];
 
-    let state = {
-        holidayMode: false,
-        lastUpdateDate: new Date().toLocaleDateString()
-    };
+    let state = { holidayMode: false, lastDate: new Date().toLocaleDateString() };
+    let currentFoundStation = null;
+    let excludedIds = [];
 
-    // Загрузка настроек и данных
     function init() {
-        const savedState = JSON.parse(localStorage.getItem('traficar_state'));
+        const saved = JSON.parse(localStorage.getItem('traficar_state_v3'));
         const today = new Date().toLocaleDateString();
-
-        if(savedState) {
-            state = savedState;
-            // Авто-выключение праздничной ставки в новые сутки
-            if(state.lastUpdateDate !== today) {
+        if(saved) {
+            state = saved;
+            if(state.lastDate !== today) {
                 state.holidayMode = false;
-                state.lastUpdateDate = today;
-                saveState();
+                state.lastDate = today;
+                localStorage.setItem('traficar_state_v3', JSON.stringify(state));
             }
         }
+        document.getElementById('holidayToggle').checked = state.holidayMode;
         render();
     }
 
-    function toggleHoliday() {
-        state.holidayMode = !state.holidayMode;
-        saveState();
-        render();
+    function isStationOpen(hours) {
+        const now = new Date();
+        const cur = now.getHours() * 60 + now.getMinutes();
+        const [start, end] = hours.split(' - ').map(t => {
+            const [h, m] = t.split(':').map(Number);
+            return h * 60 + m;
+        });
+        return end < start ? (cur >= start || cur <= end) : (cur >= start && cur <= end);
     }
 
-    function saveState() {
-        localStorage.setItem('traficar_state', JSON.stringify(state));
-    }
-
-    function getDist(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2-lat1)*Math.PI/180;
-        const dLon = (lon2-lon1)*Math.PI/180;
-        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    }
-
-    function startWork() {
+    function findWork(isNext) {
         const car = document.getElementById('carNumber').value.toUpperCase().trim();
-        if(!car) return alert("Введите номер!");
-
-        const needV = document.getElementById('vacuum').checked;
-        const needW = document.getElementById('wash').checked;
+        if(!car) return alert("Введите номер машины!");
+        if(!isNext) excludedIds = [];
 
         navigator.geolocation.getCurrentPosition(pos => {
             const uLat = pos.coords.latitude;
             const uLon = pos.coords.longitude;
+            const needV = document.getElementById('vacuum').checked;
+            const needW = document.getElementById('wash').checked;
 
-            let filtered = orlenData.filter(s => (!needV || s.vacuum === 1) && (!needW || s.wash === 1));
-            if(filtered.length === 0) return alert("Нет заправок!");
-
-            let closest = filtered.reduce((prev, curr) => 
-                getDist(uLat, uLon, prev.lat, prev.lon) < getDist(uLat, uLon, curr.lat, curr.lon) ? prev : curr
+            let filtered = orlenData.filter(s => 
+                (!needV || s.vacuum === 1) &&[cite: 1]
+                (!needW || s.wash === 1) &&[cite: 1]
+                !excludedIds.includes(s.id) &&[cite: 1]
+                isStationOpen(s.open_hours)[cite: 1]
             );
 
-            const amount = state.holidayMode ? 28 : 21;
-            const entry = {
-                id: Date.now(),
-                car,
-                date: new Date().toLocaleDateString(),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                earn: amount,
-                station: closest.coment
-            };
+            if(!filtered.length) {
+                alert("Больше вариантов нет");
+                return isNext && closeConfirm();
+            }
 
-            const history = JSON.parse(localStorage.getItem('traficar_pro_logs') || "[]");
-            history.unshift(entry);
-            localStorage.setItem('traficar_pro_logs', JSON.stringify(history));
-            
-            render();
-            window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${closest.lat},${closest.lon}`;
+            currentFoundStation = filtered.reduce((prev, curr) => 
+                Math.hypot(uLat-prev.lat, uLon-prev.lon) < Math.hypot(uLat-curr.lat, uLon-curr.lon) ? prev : curr
+            );
+
+            excludedIds.push(currentFoundStation.id);
+            document.getElementById('confAddress').innerText = currentFoundStation.adress;
+            document.getElementById('confComent').innerText = currentFoundStation.coment;
+            document.getElementById('confHours').innerText = currentFoundStation.open_hours;
+            document.getElementById('confirmScreen').style.display = 'block';
         });
     }
 
+    function confirmNavigation() {
+        const car = document.getElementById('carNumber').value.toUpperCase().trim();
+        const entry = {
+            id: Date.now(), car, date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+            earn: state.holidayMode ? 28 : 21,
+            station: currentFoundStation.coment
+        };
+        const logs = JSON.parse(localStorage.getItem('traficar_pro_logs') || "[]");
+        logs.unshift(entry);
+        localStorage.setItem('traficar_pro_logs', JSON.stringify(logs));
+        
+        window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${currentFoundStation.lat},${currentFoundStation.lon}`;
+        closeConfirm();
+        render();
+    }
+
+    function closeConfirm() { document.getElementById('confirmScreen').style.display = 'none'; }
+    function toggleSettings() { 
+        const s = document.getElementById('settings');
+        s.style.display = s.style.display === 'block' ? 'none' : 'block';
+    }
+
     function deleteEntry(id) {
-        if(confirm("Точно удалить эту машину из истории?")) {
-            let history = JSON.parse(localStorage.getItem('traficar_pro_logs') || "[]");
-            history = history.filter(item => item.id !== id);
-            localStorage.setItem('traficar_pro_logs', JSON.stringify(history));
+        if(confirm("Удалить запись?")) {
+            const h = JSON.parse(localStorage.getItem('traficar_pro_logs') || "[]");
+            localStorage.setItem('traficar_pro_logs', JSON.stringify(h.filter(i => i.id !== id)));
             render();
         }
     }
 
-    function render() {
-        const history = JSON.parse(localStorage.getItem('traficar_pro_logs') || "[]");
-        const today = new Date().toLocaleDateString();
-        
-        // Обновление заголовка
-        const todayEarn = history.filter(i => i.date === today).reduce((sum, i) => sum + i.earn, 0);
-        document.getElementById('todaySum').innerText = todayEarn + " PLN";
-        
-        document.getElementById('holidayIndicator').style.display = state.holidayMode ? 'block' : 'none';
-        document.getElementById('holidayToggle').className = state.holidayMode ? 'toggle-btn toggle-active' : 'toggle-btn';
+    function toggleHoliday() {
+        state.holidayMode = document.getElementById('holidayToggle').checked;
+        localStorage.setItem('traficar_state_v3', JSON.stringify(state));
+        render();
+    }
 
-        // Группировка по датам
-        const groups = history.reduce((acc, item) => {
-            if(!acc[item.date]) acc[item.date] = [];
-            acc[item.date].push(item);
+    function render() {
+        const logs = JSON.parse(localStorage.getItem('traficar_pro_logs') || "[]");
+        const today = new Date().toLocaleDateString();
+        const todayEarn = logs.filter(i => i.date === today).reduce((s, i) => s + i.earn, 0);
+        
+        document.getElementById('todaySum').innerText = todayEarn + " PLN";
+        document.getElementById('holidayIndicator').style.display = state.holidayMode ? 'block' : 'none';
+
+        const groups = logs.reduce((acc, i) => {
+            if(!acc[i.date]) acc[i.date] = [];
+            acc[i.date].push(i);
             return acc;
         }, {});
 
         let html = '';
         for(let date in groups) {
-            html += `<div class="date-group"><div class="date-header">${date === today ? 'СЕГОДНЯ' : date}</div>`;
+            html += `<div class="date-header">${date === today ? 'Сегодня' : date}</div>`;
             html += groups[date].map(i => `
                 <div class="log-item">
-                    <div class="log-info">
-                        <strong>${i.car}</strong>
-                        <small style="color:gray">${i.time} | ${i.station}</small>
+                    <div>
+                        <strong>${i.car}</strong><br>
+                        <small>${i.time} • ${i.station}</small>
                     </div>
-                    <div style="font-weight:bold; color: green;">${i.earn} PLN</div>
-                    <button class="del-btn" onclick="deleteEntry(${i.id})">🗑️</button>
+                    <div style="display:flex; align-items:center">
+                        <span class="earn-text">+${i.earn}</span>
+                        <span class="del-icon" onclick="deleteEntry(${i.id})">×</span>
+                    </div>
                 </div>
             `).join('');
-            html += `</div>`;
         }
         document.getElementById('historyList').innerHTML = html;
     }
 
     init();
 </script>
-
 </body>
 </html>
