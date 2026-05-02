@@ -1,91 +1,40 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <title>Traficar Drive</title>
-    <link rel="apple-touch-icon" href="icon.png">
-    <style>
-        :root { --purple: #7419AF; --light: #F5F5F5; --green: #27AE60; }
-        body { font-family: 'Montserrat', sans-serif; background: #FFF; margin: 0; padding: 20px; color: #000; -webkit-tap-highlight-color: transparent; }
-        
-        /* Статистика */
-        .money-today { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
-        .holiday-badge { display: inline-block; background: #FFD700; font-size: 10px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-bottom: 20px; }
-
-        h2 { font-weight: 800; font-size: 24px; margin: 0 0 15px 0; letter-spacing: -0.5px; }
-        input { width: 100%; padding: 18px; border: 1px solid #E0E0E0; border-radius: 15px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px; font-family: 'Montserrat'; background: var(--light); }
-        
-        .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .opt { background: var(--light); padding: 15px 5px; border-radius: 12px; text-align: center; font-size: 10px; font-weight: 700; color: #666; }
-        .opt input { display: block; margin: 0 auto 8px; transform: scale(1.3); }
-        
-        button { font-family: 'Montserrat'; border: none; cursor: pointer; width: 100%; transition: 0.2s; outline: none; }
-        .main-btn { background: var(--purple); color: white; padding: 20px; border-radius: 40px; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
-        .secondary-btn { background: var(--light); color: #000; padding: 18px; border-radius: 40px; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
-
-        /* Экран подтверждения */
-        #confirmScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; padding: 40px 20px; box-sizing: border-box; }
-        .info-table { width: 100%; margin: 30px 0; border-spacing: 0 15px; }
-        .info-table td { font-size: 14px; vertical-align: top; }
-        .info-table td:first-child { font-weight: 700; color: #999; width: 35%; }
-
-        /* История */
-        .date-header { font-size: 12px; color: #999; font-weight: 700; margin: 30px 0 10px; text-transform: uppercase; }
-        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #EEE; }
-        .earn-val { color: var(--green); font-weight: 800; font-size: 16px; }
-        
-        #settingsPanel { display: none; margin-top: 20px; padding: 20px; border: 1px solid #EEE; border-radius: 15px; }
-    </style>
-</head>
-<body>
-
-<div id="confirmScreen">
-    <h2 id="confTitle">Szczegóły stacji</h2>
-    <table class="info-table">
-        <tr><td>📍 Adres</td><td id="confAddress"></td></tr>
-        <tr><td>💬 Koment</td><td id="confComent"></td></tr>
-        <tr><td>🕒 Godziny</td><td id="confHours"></td></tr>
-    </table>
-    <button class="main-btn" id="btnGo">NAWIGUJ</button>
-    <button class="secondary-btn" id="btnNext">KOLEJNY WARIANT</button>
-    <button class="secondary-btn" style="background:none; color:#999" id="btnCancel">ANULUJ</button>
-</div>
-
-<div id="appUI">
-    <div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase;">Zarobek dzisiaj:</div>
-    <div class="money-today" id="totalCashDisplay">0 PLN</div>
-    <div id="holidayBadge" class="holiday-badge" style="display:none;">STAWKA ŚWIĄTECZNA</div>
-
-    <h2 style="margin-top: 10px;">Zlecenia</h2>
-    <input type="text" id="carInput" placeholder="Numer rejestracyjny" autocomplete="off">
+<style>
+    :root { --purple: #7419AF; --light: #F5F5F5; --green: #27AE60; }
+    body { font-family: 'Montserrat', sans-serif; background: #FFF; margin: 0; padding: 20px; color: #000; -webkit-tap-highlight-color: transparent; }
     
-    <div class="grid-options">
-        <div class="opt"><input type="checkbox" id="checkFuel" checked>FUEL</div>
-        <div class="opt"><input type="checkbox" id="checkVacuum">VACUUM</div>
-        <div class="opt"><input type="checkbox" id="checkWash">WASH</div>
-    </div>
+    .money-today { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+    .holiday-badge { display: inline-block; background: #FFD700; font-size: 10px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-bottom: 20px; }
 
-    <button class="main-btn" id="btnSearch">ZNAJDŹ ORLEN</button>
+    h2 { font-weight: 800; font-size: 24px; margin: 0 0 15px 0; letter-spacing: -0.5px; }
+    input { width: 100%; padding: 18px; border: 1px solid #E0E0E0; border-radius: 15px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px; font-family: 'Montserrat'; background: var(--light); }
     
-    <div style="text-align: center; margin-top: 10px;">
-        <button id="btnSettings" style="background:none; color:#CCC; font-size:11px; font-weight:700; padding:10px; width:auto;">USTAWIENIA</button>
-    </div>
+    .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+    .opt { background: var(--light); padding: 15px 5px; border-radius: 12px; text-align: center; font-size: 10px; font-weight: 700; color: #666; }
+    .opt input { display: block; margin: 0 auto 8px; transform: scale(1.1); }
+    
+    button { font-family: 'Montserrat'; border: none; cursor: pointer; width: 100%; transition: 0.2s; outline: none; }
+    .main-btn { background: var(--purple); color: white; padding: 20px; border-radius: 40px; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
+    .secondary-btn { background: var(--light); color: #000; padding: 18px; border-radius: 40px; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
 
-    <div id="settingsPanel">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:700; font-size:14px">Stawka świąteczna (+7)</span>
-            <input type="checkbox" id="holidayToggle" style="width:auto; margin:0; transform: scale(1.5);">
-        </div>
-    </div>
+    #confirmScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; padding: 40px 20px; box-sizing: border-box; }
+    .info-table { width: 100%; margin: 30px 0; border-spacing: 0 15px; }
+    .info-table td { font-size: 14px; vertical-align: top; }
+    .info-table td:first-child { font-weight: 700; color: #999; width: 35% }
 
-    <div id="historyList"></div>
-</div>
+    /* Стили истории с допами */
+    .date-header { font-size: 12px; color: #999; font-weight: 700; margin: 30px 0 10px; text-transform: uppercase; }
+    .log-item { padding: 15px 0; border-bottom: 1px solid #EEE; }
+    .log-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .earn-val { color: var(--green); font-weight: 800; font-size: 16px; }
+    
+    .extra-box { background: #FFF9E6; padding: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+    .extra-input { padding: 8px; border: 1px solid #DDD; border-radius: 8px; font-size: 12px; margin: 0; background: #FFF; width: 100%; }
+    .extra-check { transform: scale(1.2); }
+
+    #settingsPanel { display: none; margin-top: 20px; padding: 20px; border: 1px solid #EEE; border-radius: 15px; }
+</style>
 
 <script>
-    // ТВОЙ ПОЛНЫЙ СПИСОК ЗАПРАВОК
     const stations = [
         { id: 'WAW01', addr: 'Wawrzyńca Surowieckiego 14, 02-784 Warszawa', lat: 52.15716068, lon: 21.02050067, com: 'Камили', vac: 1, wash: 1, hours: '00:00 - 23:59' },
         { id: 'WAW02', addr: 'Śródziemnomorska 65, 02-758 Warszawa', lat: 52.17671363, lon: 21.04534754, com: 'Чарноморска', vac: 1, wash: 0, hours: '00:00 - 23:59' },
@@ -111,7 +60,6 @@
     let excludedIds = [];
     let selectedStation = null;
 
-    // ГАРАНТИРОВАННЫЙ ЗАПУСК КНОПОК
     document.addEventListener('DOMContentLoaded', () => {
         const today = new Date().toLocaleDateString();
         const savedDate = localStorage.getItem('last_date');
@@ -125,8 +73,6 @@
         }
 
         document.getElementById('holidayToggle').checked = holidayMode;
-
-        // Привязка кликов
         document.getElementById('btnSearch').onclick = () => findStation(false);
         document.getElementById('btnSettings').onclick = toggleSettings;
         document.getElementById('holidayToggle').onchange = updateHoliday;
@@ -148,7 +94,7 @@
         updateUI();
     }
 
-    function isStationOpen(hStr) {
+    function isOpen(hStr) {
         try {
             const now = new Date();
             const current = now.getHours() * 60 + now.getMinutes();
@@ -163,7 +109,6 @@
     function findStation(isNext) {
         const car = document.getElementById('carInput').value.trim().toUpperCase();
         if (!car) return alert("Wprowadź numer!");
-
         if (!isNext) excludedIds = [];
 
         navigator.geolocation.getCurrentPosition(pos => {
@@ -176,7 +121,7 @@
                 (!needVac || s.vac === 1) && 
                 (!needWash || s.wash === 1) && 
                 !excludedIds.includes(s.id) && 
-                isStationOpen(s.hours)
+                isOpen(s.hours)
             );
 
             if (filtered.length === 0) {
@@ -200,38 +145,55 @@
 
     function goNav() {
         const car = document.getElementById('carInput').value.trim().toUpperCase();
-        const logs = JSON.parse(localStorage.getItem('logs_v7') || "[]");
+        const logs = JSON.parse(localStorage.getItem('logs_v8') || "[]");
         
         logs.unshift({
             id: Date.now(),
             car,
             date: new Date().toLocaleDateString(),
             time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-            earn: holidayMode ? 28 : 21,
+            baseEarn: holidayMode ? 28 : 21,
+            extra: false,
+            extraReason: '',
             station: selectedStation.com
         });
 
-        localStorage.setItem('logs_v7', JSON.stringify(logs));
+        localStorage.setItem('logs_v8', JSON.stringify(logs));
         document.getElementById('confirmScreen').style.display = 'none';
         updateUI();
         window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${selectedStation.lat},${selectedStation.lon}`;
     }
 
+    function updateExtra(id, isChecked, reason) {
+        let logs = JSON.parse(localStorage.getItem('logs_v8') || "[]");
+        const index = logs.findIndex(l => l.id === id);
+        if (index !== -1) {
+            logs[index].extra = isChecked;
+            if (reason !== undefined) logs[index].extraReason = reason;
+            localStorage.setItem('logs_v8', JSON.stringify(logs));
+            updateUI(false); // Мягкое обновление без перерисовки всего
+        }
+    }
+
     function deleteLog(id) {
         if (confirm("Usunąć?")) {
-            let logs = JSON.parse(localStorage.getItem('logs_v7') || "[]");
-            localStorage.setItem('logs_v7', JSON.stringify(logs.filter(l => l.id !== id)));
+            let logs = JSON.parse(localStorage.getItem('logs_v8') || "[]");
+            localStorage.setItem('logs_v8', JSON.stringify(logs.filter(l => l.id !== id)));
             updateUI();
         }
     }
 
-    function updateUI() {
-        const logs = JSON.parse(localStorage.getItem('logs_v7') || "[]");
+    function updateUI(fullRender = true) {
+        const logs = JSON.parse(localStorage.getItem('logs_v8') || "[]");
         const today = new Date().toLocaleDateString();
-        const earned = logs.filter(l => l.date === today).reduce((sum, l) => sum + l.earn, 0);
+        const earned = logs.filter(l => l.date === today).reduce((sum, l) => {
+            return sum + l.baseEarn + (l.extra ? 10 : 0);
+        }, 0);
 
         document.getElementById('totalCashDisplay').innerText = earned + " PLN";
         document.getElementById('holidayBadge').style.display = holidayMode ? 'block' : 'none';
+
+        if (!fullRender) return;
 
         const groups = logs.reduce((acc, l) => {
             if (!acc[l.date]) acc[l.date] = [];
@@ -242,18 +204,28 @@
         let html = '';
         Object.keys(groups).sort((a,b) => new Date(b) - new Date(a)).forEach(date => {
             html += `<div class="date-header">${date === today ? 'Dzisiaj' : date}</div>`;
-            html += groups[date].map(l => `
+            html += groups[date].map(l => {
+                const total = l.baseEarn + (l.extra ? 10 : 0);
+                return `
                 <div class="log-item">
-                    <div><strong>${l.car}</strong><br><small>${l.time} • ${l.station}</small></div>
-                    <div style="display:flex; align-items:center;">
-                        <span class="earn-val">+${l.earn}</span>
-                        <span style="color:#CCC; margin-left:15px; font-size:24px;" onclick="deleteLog(${l.id})">×</span>
+                    <div class="log-main">
+                        <div><strong>${l.car}</strong><br><small>${l.time} • ${l.station}</small></div>
+                        <div style="display:flex; align-items:center;">
+                            <span class="earn-val">+${total}</span>
+                            <span style="color:#CCC; margin-left:15px; font-size:24px;" onclick="deleteLog(${l.id})">×</span>
+                        </div>
+                    </div>
+                    <div class="extra-box">
+                        <input type="checkbox" class="extra-check" ${l.extra ? 'checked' : ''} 
+                            onchange="updateExtra(${l.id}, this.checked, undefined)">
+                        <span style="font-size:12px; font-weight:700;">+10 PLN</span>
+                        <input type="text" class="extra-input" placeholder="Powód (np. opony, panel)" 
+                            value="${l.extraReason}" 
+                            oninput="updateExtra(${l.id}, undefined, this.value)">
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         });
         document.getElementById('historyList').innerHTML = html;
     }
 </script>
-</body>
-</html>
