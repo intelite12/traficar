@@ -6,45 +6,65 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Иконки для Android и iOS -->
     <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#7419AF">
 
-    <title>Traficar Drive</title>
-    <title>Traficar Drive</title>
-    <link rel="apple-touch-icon" href = "icon.png">
-    <link rel="manifest" href="manifest.json">
-    
+    <title>Traficar Service Pro</title>
     <style>
         :root { --purple: #7419AF; --light: #F5F5F5; --green: #27AE60; }
-        body { font-family: 'Montserrat', sans-serif; background: #FFF; margin: 0; padding: 20px; color: #000; }
+        body { font-family: 'Montserrat', sans-serif; background: #FFF; margin: 0; padding: 20px; color: #000; -webkit-tap-highlight-color: transparent; }
+        
         .money-today { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
-        .holiday-badge { display: inline-block; background: #FFD700; font-size: 10px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-bottom: 20px; }
-        h2 { font-weight: 800; font-size: 24px; margin: 0 0 15px 0; }
-        input { width: 100%; padding: 18px; border: 1px solid #E0E0E0; border-radius: 15px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px; font-family: 'Montserrat'; background: var(--light); }
-        .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .opt { background: var(--light); padding: 15px 5px; border-radius: 12px; text-align: center; font-size: 10px; font-weight: 700; color: #666; }
-        .opt input { display: block; margin: 0 auto 8px; transform: scale(0.8); }
-        button { font-family: 'Montserrat'; border: none; cursor: pointer; width: 100%; transition: 0.2s; outline: none; }
+        .holiday-badge { display: inline-block; background: #FFD700; font-size: 10px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-bottom: 20px; color: #000; }
+
+        h2 { font-weight: 800; font-size: 24px; margin: 0 0 15px 0; letter-spacing: -0.5px; }
+        
+        input[type="text"], input[type="number"] { 
+            width: 100%; padding: 18px; border: 1px solid #E0E0E0; border-radius: 15px; 
+            font-size: 16px; box-sizing: border-box; margin-bottom: 20px; 
+            font-family: 'Montserrat'; background: var(--light); outline: none; 
+            -webkit-appearance: none;
+        }
+        
+        /* Исправленная сетка опций */
+        .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .opt { 
+            background: #F8F8F8; border: 2px solid #EBEBEB; padding: 15px 5px; 
+            border-radius: 16px; text-align: center; font-size: 11px; font-weight: 800; color: #555;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        
+        /* Исправленные чекбоксы с корпоративным цветом */
+        input[type="checkbox"] {
+            width: 24px; height: 24px; margin: 0 0 10px 0; cursor: pointer;
+            accent-color: var(--purple); /* Фиолетовая галочка */
+        }
+        
+        button { font-family: 'Montserrat'; border: none; cursor: pointer; width: 100%; transition: 0.2s; outline: none; -webkit-appearance: none; }
         .main-btn { background: var(--purple); color: white; padding: 20px; border-radius: 40px; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
+        .main-btn:disabled { background: #CCC; cursor: not-allowed; }
         .secondary-btn { background: var(--light); color: #000; padding: 18px; border-radius: 40px; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
-        #confirmScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; padding: 40px 20px; box-sizing: border-box; }
+
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; padding: 40px 20px; box-sizing: border-box; overflow-y: auto; }
         .info-table { width: 100%; margin: 30px 0; border-spacing: 0 15px; }
         .info-table td { font-size: 14px; vertical-align: top; }
         .info-table td:first-child { font-weight: 700; color: #999; width: 35%; }
+
         .date-header { font-size: 12px; color: #999; font-weight: 700; margin: 30px 0 10px; text-transform: uppercase; }
         .log-item { padding: 15px 0; border-bottom: 1px solid #EEE; }
-        .log-main { display: flex; justify-content: space-between; align-items: center; }
+        .log-main { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .earn-val { color: var(--green); font-weight: 800; font-size: 16px; }
-        .extra-box { background: #FFF9E6; padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        .extra-input { padding: 8px; border: 1px solid #DDD; border-radius: 8px; font-size: 12px; margin: 0; background: #FFF; flex-grow: 1; width: 50%; }
+        
+        .edit-link { color: var(--purple); font-size: 11px; font-weight: 800; text-transform: uppercase; margin-top: 5px; display: inline-block; cursor: pointer; }
+        .reason-text { font-size: 11px; color: #666; font-style: italic; margin-top: 4px; }
+
         #settingsPanel { display: none; margin-top: 20px; padding: 20px; border: 1px solid #EEE; border-radius: 15px; }
     </style>
 </head>
 <body>
 
-<div id="confirmScreen">
+<div id="confirmScreen" class="overlay">
     <h2>Szczegóły stacji</h2>
     <table class="info-table">
         <tr><td>📍 Adres</td><td id="confAddress"></td></tr>
@@ -56,6 +76,20 @@
     <button class="secondary-btn" style="background:none; color:#999" id="btnCancel">ANULUJ</button>
 </div>
 
+<div id="editStawkaScreen" class="overlay">
+    <h2>Edytuj Stawkę</h2>
+    <p id="editCarNum" style="font-weight:800; color:var(--purple); margin-bottom:25px;"></p>
+    
+    <div style="font-size:12px; font-weight:700; color:#999; margin-bottom:8px;">DODATKOWA KWOTA (PLN):</div>
+    <input type="number" id="inputExtraAmount" placeholder="0" pattern="[0-9]*" inputmode="numeric">
+    
+    <div style="font-size:12px; font-weight:700; color:#999; margin-bottom:8px;">KOMENTARZ / POWÓD:</div>
+    <input type="text" id="inputExtraReason" placeholder="Np. opony, brak płynu...">
+    
+    <button class="main-btn" id="btnSaveStawka">ZAPISZ</button>
+    <button class="secondary-btn" style="background:none; color:#999" onclick="document.getElementById('editStawkaScreen').style.display='none'">ANULUJ</button>
+</div>
+
 <div id="appUI">
     <div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase;">Zarobek dzisiaj:</div>
     <div class="money-today" id="totalCashDisplay">0 PLN</div>
@@ -65,12 +99,12 @@
     <input type="text" id="carInput" placeholder="Numer rejestracyjny" autocomplete="off">
     
     <div class="grid-options">
-        <div class="opt"><input type="checkbox" id="checkFuel" checked>FUEL</div>
-        <div class="opt"><input type="checkbox" id="checkVacuum">VACUUM</div>
-        <div class="opt"><input type="checkbox" id="checkWash">WASH</div>
+        <label class="opt"><input type="checkbox" id="checkFuel" checked>FUEL</label>
+        <label class="opt"><input type="checkbox" id="checkVacuum">VACUUM</label>
+        <label class="opt"><input type="checkbox" id="checkWash">WASH</label>
     </div>
 
-    <button class="main-btn" id="btnSearch">ZNAJDŹ ORLEN</button>
+    <button class="main-btn" id="btnSearch" disabled>POBIERANIE BAZY...</button>
     
     <div style="text-align: center; margin-top: 10px;">
         <button id="btnSettings" style="background:none; color:#CCC; font-size:11px; font-weight:700; padding:10px; width:auto;">USTAWIENIA</button>
@@ -79,7 +113,7 @@
     <div id="settingsPanel">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:700; font-size:14px">Stawka świąteczna (+7)</span>
-            <input type="checkbox" id="holidayToggle" style="width:auto; margin:0; transform: scale(1.5);">
+            <input type="checkbox" id="holidayToggle" style="margin:0;">
         </div>
     </div>
 
@@ -87,31 +121,11 @@
 </div>
 
 <script>
-    // Все заправки из предоставленного списка
-    var stations = [
-        { id: 'WAW01', addr: 'Wawrzyńca Surowieckiego 14', lat: 52.15716068, lon: 21.02050067, com: 'Камили', vac: 1, wash: 1, hours: '00:00 - 23:59' },
-        { id: 'WAW02', addr: 'Śródziemnomorska 65', lat: 52.17671363, lon: 21.04534754, com: 'Чарноморска', vac: 1, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW03', addr: 'Migdałowa 2', lat: 52.14800023, lon: 21.05961734, com: 'Безполезная', vac: 0, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW04', addr: 'Antoniego Malczewskiego 1', lat: 52.19459585, lon: 21.02387832, com: 'Puławska маленькая', vac: 0, wash: 0, hours: '06:00 - 22:00' },
-        { id: 'WAW05', addr: 'aleja Wyścigowa 2', lat: 52.16590022, lon: 21.01578848, com: 'Wyscigowa', vac: 0, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW06', addr: 'Postępu 16', lat: 52.18052375, lon: 20.99809104, com: 'Postępu', vac: 1, wash: 1, hours: '00:00 - 23:59' },
-        { id: 'WAW07', addr: 'Wołoska 28', lat: 52.18723776, lon: 21.00275480, com: 'Wołoska (Димка)', vac: 1, wash: 1, hours: '00:00 - 23:59' },
-        { id: 'WAW08', addr: 'Bolesława Limanowskiego 25', lat: 52.18793911, lon: 21.05036444, com: 'Mangalia', vac: 1, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW09', addr: 'Powsińska 14', lat: 52.18078647, lon: 21.07079854, com: 'Powśinska', vac: 1, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW10', addr: 'Dolna 1', lat: 52.20158043, lon: 21.03445485, com: 'Dolna', vac: 0, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW11', addr: 'Jamesa Gordona Bennetta 2A', lat: 52.16785276, lon: 20.97893344, com: 'Lotnisko', vac: 1, wash: 1, hours: '00:00 - 23:59' },
-        { id: 'WAW12', addr: 'Franciszka Hynka 2', lat: 52.18625203, lon: 20.97096608, com: 'Hynka', vac: 1, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW13', addr: 'Rakowiecka 38', lat: 52.20630316, lon: 21.00011178, com: 'Rakowiecka', vac: 0, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW14', addr: 'Polna 1A', lat: 52.21429362, lon: 21.02021415, com: 'Polna', vac: 0, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW15', addr: 'al. Niepodległości 206', lat: 52.21531281, lon: 21.00623435, com: 'Niepodległości', vac: 0, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW16', addr: 'Czerniakowska 149A', lat: 52.21291801, lon: 21.04622429, com: 'Александра', vac: 1, wash: 1, hours: '00:00 - 23:59' },
-        { id: 'WAW17', addr: 'Al. 3 Maja 1A', lat: 52.23466816, lon: 21.03606967, com: '3 Maja', vac: 0, wash: 0, hours: '00:00 - 23:59' },
-        { id: 'WAW18', addr: 'Wawelska 3B', lat: 52.21670048, lon: 20.99858724, com: 'Wawelska', vac: 1, wash: 0, hours: '00:00 - 23:59' }
-    ];
-
+    var stations = [];
     var holidayMode = false;
     var excludedIds = [];
     var selectedStation = null;
+    var activeEditId = null;
 
     window.onload = function() {
         var today = new Date().toLocaleDateString();
@@ -122,7 +136,6 @@
         } else {
             holidayMode = localStorage.getItem('holiday_on') === 'true';
         }
-
         document.getElementById('holidayToggle').checked = holidayMode;
         
         document.getElementById('btnSearch').onclick = function() { findStation(false); };
@@ -137,136 +150,4 @@
         };
         document.getElementById('btnGo').onclick = goNav;
         document.getElementById('btnNext').onclick = function() { findStation(true); };
-        document.getElementById('btnCancel').onclick = function() { document.getElementById('confirmScreen').style.display = 'none'; };
-
-        updateUI();
-    };
-
-    function isOpen(hStr) {
-        try {
-            var now = new Date();
-            var current = now.getHours() * 60 + now.getMinutes();
-            var times = hStr.split(' - ').map(function(t) {
-                var p = t.split(':').map(Number);
-                return p[0] * 60 + p[1];
-            });
-            return times[1] < times[0] ? (current >= times[0] || current <= times[1]) : (current >= times[0] && current <= times[1]);
-        } catch(e) { return true; }
-    }
-
-    function findStation(isNext) {
-        var car = document.getElementById('carInput').value.trim().toUpperCase();
-        if (!car) { alert("Wprowadź numer!"); return; }
-        if (!isNext) excludedIds = [];
-
-        navigator.geolocation.getCurrentPosition(function(pos) {
-            var uLat = pos.coords.latitude;
-            var uLon = pos.coords.longitude;
-            var needVac = document.getElementById('checkVacuum').checked;
-            var needWash = document.getElementById('checkWash').checked;
-
-            var filtered = stations.filter(function(s) {
-                return (!needVac || s.vac === 1) && (!needWash || s.wash === 1) && 
-                       excludedIds.indexOf(s.id) === -1 && isOpen(s.hours);
-            });
-
-            if (filtered.length === 0) {
-                alert("Brak stacji!");
-                if (isNext) document.getElementById('confirmScreen').style.display = 'none';
-                return;
-            }
-
-            selectedStation = filtered.reduce(function(prev, curr) {
-                var d1 = Math.sqrt(Math.pow(uLat - prev.lat, 2) + Math.pow(uLon - prev.lon, 2));
-                var d2 = Math.sqrt(Math.pow(uLat - curr.lat, 2) + Math.pow(uLon - curr.lon, 2));
-                return d1 < d2 ? prev : curr;
-            });
-
-            excludedIds.push(selectedStation.id);
-            document.getElementById('confAddress').innerText = selectedStation.addr;
-            document.getElementById('confComent').innerText = selectedStation.com;
-            document.getElementById('confHours').innerText = selectedStation.hours;
-            document.getElementById('confirmScreen').style.display = 'block';
-        }, function() { alert("Włącz GPS!"); });
-    }
-
-    function goNav() {
-        var car = document.getElementById('carInput').value.trim().toUpperCase();
-        var logs = JSON.parse(localStorage.getItem('logs_stable') || "[]");
-        logs.unshift({
-            id: Date.now(), car: car, date: new Date().toLocaleDateString(),
-            time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-            baseEarn: holidayMode ? 28 : 21, extra: false, extraReason: '', station: selectedStation.com
-        });
-        localStorage.setItem('logs_stable', JSON.stringify(logs));
-        document.getElementById('confirmScreen').style.display = 'none';
-        updateUI();
-        window.location.href = "https://www.google.com/maps/dir/?api=1&destination=" + selectedStation.lat + "," + selectedStation.lon;
-    }
-
-    function updateEntry(id, isExtra, reason) {
-        var logs = JSON.parse(localStorage.getItem('logs_stable') || "[]");
-        for (var i = 0; i < logs.length; i++) {
-            if (logs[i].id === id) {
-                if (isExtra !== undefined) logs[i].extra = isExtra;
-                if (reason !== undefined) logs[i].extraReason = reason;
-                break;
-            }
-        }
-        localStorage.setItem('logs_stable', JSON.stringify(logs));
-        updateUI(false);
-    }
-
-    function deleteLog(id) {
-        if (confirm("Usunąć?")) {
-            var logs = JSON.parse(localStorage.getItem('logs_stable') || "[]");
-            logs = logs.filter(function(l) { return l.id !== id; });
-            localStorage.setItem('logs_stable', JSON.stringify(logs));
-            updateUI();
-        }
-    }
-
-    function updateUI(full) {
-        var logs = JSON.parse(localStorage.getItem('logs_stable') || "[]");
-        var today = new Date().toLocaleDateString();
-        var earned = 0;
-        for (var j = 0; j < logs.length; j++) {
-            if (logs[j].date === today) earned += logs[j].baseEarn + (logs[j].extra ? 10 : 0);
-        }
-        document.getElementById('totalCashDisplay').innerText = earned + " PLN";
-        document.getElementById('holidayBadge').style.display = holidayMode ? 'block' : 'none';
-
-        if (full === false) return;
-
-        var groups = {};
-        logs.forEach(function(l) {
-            if (!groups[l.date]) groups[l.date] = [];
-            groups[l.date].push(l);
-        });
-
-        var html = '';
-        var dates = Object.keys(groups).sort(function(a, b) { return new Date(b) - new Date(a); });
-        dates.forEach(function(date) {
-            html += '<div class="date-header">' + (date === today ? 'Dzisiaj' : date) + '</div>';
-            groups[date].forEach(function(l) {
-                html += '<div class="log-item">' +
-                    '<div class="log-main">' +
-                        '<div><strong>' + l.car + '</strong><br><small>' + l.time + ' • ' + l.station + '</small></div>' +
-                        '<div style="display:flex; align-items:center;">' +
-                            '<span class="earn-val">+' + (l.baseEarn + (l.extra ? 10 : 0)) + '</span>' +
-                            '<span style="color:#CCC; margin-left:15px; font-size:24px;" onclick="deleteLog(' + l.id + ')">×</span>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="extra-box">' +
-                        '<input type="checkbox" style="transform:scale(1.2)" ' + (l.extra ? 'checked' : '') + ' onchange="updateEntry(' + l.id + ', this.checked, undefined)">' +
-                        '<span style="font-size:12px; font-weight:700;">+10 PLN</span>' +
-                        '<input type="text" class="extra-input" placeholder="Powód" value="' + l.extraReason + '" oninput="updateEntry(' + l.id + ', undefined, this.value)">' +
-                    '</div>' +
-                '</div>';
-            });
-        });
-        document.getElementById('historyList').innerHTML = html;
-    }
-</script>
-</body>
-</html>
+        document.getElementById('btnCancel').onclick = closeConfirm;
