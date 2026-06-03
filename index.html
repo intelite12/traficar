@@ -27,7 +27,6 @@
             -webkit-appearance: none;
         }
         
-        /* Исправленная сетка опций */
         .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
         .opt { 
             background: #F8F8F8; border: 2px solid #EBEBEB; padding: 15px 5px; 
@@ -35,15 +34,13 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         
-        /* Исправленные чекбоксы с корпоративным цветом */
         input[type="checkbox"] {
             width: 24px; height: 24px; margin: 0 0 10px 0; cursor: pointer;
-            accent-color: var(--purple); /* Фиолетовая галочка */
+            accent-color: var(--purple);
         }
         
         button { font-family: 'Montserrat'; border: none; cursor: pointer; width: 100%; transition: 0.2s; outline: none; -webkit-appearance: none; }
         .main-btn { background: var(--purple); color: white; padding: 20px; border-radius: 40px; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
-        .main-btn:disabled { background: #CCC; cursor: not-allowed; }
         .secondary-btn { background: var(--light); color: #000; padding: 18px; border-radius: 40px; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; padding: 40px 20px; box-sizing: border-box; overflow-y: auto; }
@@ -104,7 +101,7 @@
         <label class="opt"><input type="checkbox" id="checkWash">WASH</label>
     </div>
 
-    <button class="main-btn" id="btnSearch" disabled>POBIERANIE BAZY...</button>
+    <button class="main-btn" id="btnSearch">ZNAJDŹ ORLEN</button>
     
     <div style="text-align: center; margin-top: 10px;">
         <button id="btnSettings" style="background:none; color:#CCC; font-size:11px; font-weight:700; padding:10px; width:auto;">USTAWIENIA</button>
@@ -121,7 +118,82 @@
 </div>
 
 <script>
-    var stations = [];
+    // Вшитая полная база из 72 заправок для моментальной работы
+    var stations = [
+        { id: "WAW01", addr: "Wawrzyńca Surowieckiego 14, 02-784 Warszawa", lat: 52.15716068, lon: 21.02050067, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW02", addr: "Śródziemnomorska 65, 02-758 Warszawa", lat: 52.17671363, lon: 21.04534754, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW03", addr: "Migdałowa 2, 02-796 Warszawa", lat: 52.14800023, lon: 21.05961734, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW04", addr: "Antoniego Malczewskiego 1, 02-617 Warszawa", lat: 52.19459585, lon: 21.02387832, com: "", vac: 0, wash: 0, hours: "06:00 - 22:00" },
+        { id: "WAW05", addr: "aleja Wyścigowa 2, 02-681 Warszawa", lat: 52.16590022, lon: 21.01578848, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW06", addr: "Postępu 16, 02-676 Warszawa", lat: 52.18052375, lon: 20.99809104, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW07", addr: "Wołoska 28, 02-675 Warszawa", lat: 52.18723776, lon: 21.00275480, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW08", addr: "Bolesława Limanowskiego 25, 02-943 Warszawa", lat: 52.18793911, lon: 21.05036444, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW09", addr: "Powsińska 14, 02-920 Warszawa", lat: 52.18078647, lon: 21.07079854, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW10", addr: "Dolna 1, 00-773 Warszawa", lat: 52.20158043, lon: 21.03445485, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW11", addr: "Jamesa Gordona Bennetta 2A, 02-159 Warszawa", lat: 52.16785276, lon: 20.97893344, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW12", addr: "Franciszka Hynka 2, 02-149 Warszawa", lat: 52.18625203, lon: 20.97096608, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW13", addr: "Rakowiecka 38, 02-532 Warszawa", lat: 52.20630316, lon: 21.00011178, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW14", addr: "Polna 1A, 00-622 Warszawa", lat: 52.21429362, lon: 21.02021415, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW15", addr: "al. Niepodległości 206, 00-608 Warszawa", lat: 52.21531281, lon: 21.00623435, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW16", addr: "Czerniakowska 149A, 00-453 Warszawa", lat: 52.21291801, lon: 21.04622429, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW17", addr: "Al. 3 Maja 1A, 00-401 Warszawa", lat: 52.23466816, lon: 21.03606967, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW18", addr: "Wawelska 3B, 02-034 Warszawa", lat: 52.21670048, lon: 20.99858724, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW19", addr: "Łopuszańska 24A, 02-220 Warszawa", lat: 52.19245184, lon: 20.94954461, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW20", addr: "Aleja Krakowska 51, 02-183 Warszawa", lat: 52.17022477, lon: 20.93669150, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW21", addr: "Puławska 554, 02-844 Warszawa", lat: 52.10775561, lon: 21.01755902, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "PIA01", addr: "Okulickiego 1, 05-500 Piaseczno", lat: 52.08204380, lon: 21.01555804, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "PIA02", addr: "Okulickiego 20, 05-500 Piaseczno", lat: 52.08271703, lon: 21.03201937, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW24", addr: "Wersalska 3, 03-955 Warszawa", lat: 52.22411653, lon: 21.05957427, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW25", addr: "Mieczysława Pożaryskiego 40, 04-707 Warszawa", lat: 52.20980148, lon: 21.17216059, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW26", addr: "Wydawnicza 74, 04-601 Warszawa", lat: 52.22587281, lon: 21.14911301, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "JZF01", addr: "Nadwiślańska 90, 05-420 Józefów", lat: 52.14139237, lon: 21.19043990, com: "", vac: 0, wash: 0, hours: "06:00 - 22:00" },
+        { id: "JZF02", addr: "Marszałka Józefa Piłsudskiego 5, 05-420 Józefów", lat: 52.12847563, lon: 21.24040326, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW29", addr: "Trakt Lubelski 154, 04-766 Warszawa", lat: 52.19155988, lon: 21.14018770, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW30", addr: "Filomatów 6, 04-116 Warszawa", lat: 52.23474210, lon: 21.09494102, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW31", addr: "Ostrobramska 124, 04-026 Warszawa", lat: 52.23665221, lon: 21.08727943, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW32", addr: "Nasielska 1, 04-343 Warszawa", lat: 52.24423781, lon: 21.09632046, com: "Niedziela 07:00–17:00", vac: 1, wash: 0, hours: "06:00 - 22:00" },
+        { id: "WAW33", addr: "Chodakowska 35, 03-828 Warszawa", lat: 52.25047520, lon: 21.06606826, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW34", addr: "Karola Marcinkowskiego 6, 03-722 Warszawa", lat: 52.24909437, lon: 21.04112583, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW35", addr: "Markowska 15a, 03-742 Warszawa", lat: 52.25466972, lon: 21.04231488, com: "CPN (Można płacić FLOTA); Niedziela 07:00–17:00", vac: 0, wash: 0, hours: "06:00 - 22:00" },
+        { id: "WAW36", addr: "11 Listopada 42A, 03-436 Warszawa", lat: 52.26252978, lon: 21.03811776, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW37", addr: "Trocka 2, 03-563 Warszawa", lat: 52.27325664, lon: 21.06268710, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW38", addr: "Radzymińska 283, 03-643 Warszawa", lat: 52.29277323, lon: 21.07912283, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "MRK01", addr: "Fabryczna 84, 05-270 Marki", lat: 52.31595576, lon: 21.11785777, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW40", addr: "Jagiellońska 86, 03-721 Warszawa", lat: 52.27751971, lon: 21.01307135, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW41", addr: "Władysława Syrokomli 4, 03-335 Warszawa", lat: 52.28372175, lon: 21.02316441, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW42", addr: "Modlińska 345, 03-152 Warszawa", lat: 52.34945580, lon: 20.94610591, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "JBŁ01", addr: "Zegrzyńska 7A, 05-110 Jabłonna", lat: 52.37933886, lon: 20.91890132, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "JBŁ02", addr: "Edukacyjna 3, 05-110 Jabłonna", lat: 52.38430979, lon: 20.92618125, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "LGN01", addr: "Warszawska 60, 05-120 Legionowo", lat: 52.39233513, lon: 20.93389436, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "LGN02", addr: "Jana III Sobieskiego 16, 05-120 Legionowo", lat: 52.39799016, lon: 20.91903907, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW43", addr: "Romana Sanguszki 2, 00-222 Warszawa", lat: 52.25671750, lon: 21.00719443, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW44", addr: "Spokojna 1, 05-075 Warszawa", lat: 52.25150087, lon: 20.98011117, com: "", vac: 1, wash: 0, hours: "06:00 - 22:00" },
+        { id: "WAW45", addr: "Powązkowska 43, 01-797 Warszawa", lat: 52.25928686, lon: 20.95976416, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW46", addr: "Josepha Conrada 1A, 01-922 Warszawa", lat: 52.27064945, lon: 20.93264522, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW47", addr: "Aleja Władysława Reymonta 40, 01-842 Warszawa", lat: 52.28256704, lon: 20.94089199, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW48", addr: "Marymoncka 127, 01-946 Warszawa", lat: 52.29085730, lon: 20.94864611, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW49", addr: "Heroldów 1, 01-991 Warszawa", lat: 52.30501517, lon: 20.93274615, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "MSC01", addr: "Estrady 13A, 05-080 Mościska", lat: 52.28795837, lon: 20.87632804, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW50", addr: "Obozowa 14, 01-161 Warszawa", lat: 52.24435505, lon: 20.96701907, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW51", addr: "Al. Solidarności 100, 01-016 Warszawa", lat: 52.23841562, lon: 20.98237818, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW52", addr: "Grzybowska 74, 00-844 Warszawa", lat: 52.23405337, lon: 20.98491486, com: "", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW53", addr: "Srebrna 9, 00-810 Warszawa", lat: 52.22728612, lon: 20.98946751, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW54", addr: "Daleka 5, 02-020 Warszawa", lat: 52.22206246, lon: 20.98824420, com: "", vac: 1, wash: 0, hours: "06:00 - 22:00" },
+        { id: "WAW55", addr: "Górczewska 50, 01-401 Warszawa", lat: 52.23829596, lon: 20.95539561, com: "", vac: 0, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW56", addr: "Al. Prymasa Tysiąclecia 81, 01-242 Warszawa", lat: 52.22407061, lon: 20.95721082, com: "W kierunku Gdanśk", vac: 1, wash: 0, hours: "00:00 - 23:59" },
+        { id: "WAW57", addr: "Al. Prymasa Tysiąclecia 52, 01-242 Warszawa", lat: 52.22533201, lon: 20.95845155, com: "W kierunku dw. Zachodni", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW58", addr: "Lazurowa 40, 01-315 Warszawa", lat: 52.23907516, lon: 20.89743882, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW59", addr: "Połczyńska 119, 01-303 Warszawa", lat: 52.21623403, lon: 20.88413358, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW60", addr: "Traktorzystów 8, 02-495 Warszawa", lat: 52.19979427, lon: 20.89364682, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "WAW61", addr: "Orląt Lwowskich 69, 02-495 Warszawa", lat: 52.19283247, lon: 20.85977444, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "OPK01", addr: "Michała Spisaka 1A, 05-816 Opacz-Kolonia", lat: 52.18160484, lon: 20.88561760, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "PRU01", addr: "Piastowska 4, 05-800 Pruszków", lat: 52.17274180, lon: 20.83848843, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "PRU02", addr: "Bohaterów Warszawy 7, 05-800 Pruszków", lat: 52.17162086, lon: 20.81240464, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "PRU03", addr: "Przejazdowa 5, 05-800 Pruszków", lat: 52.17556134, lon: 20.77201399, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "PRU04", addr: "Parkowa 49, 05-806 Pęcice", lat: 52.14473309, lon: 20.84810389, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" },
+        { id: "JNK01", addr: "Aleja Krakowska 17, 05-090 Falenty", lat: 52.13841660, lon: 20.90155985, com: "", vac: 1, wash: 1, hours: "00:00 - 23:59" }
+    ];
+
     var holidayMode = false;
     var excludedIds = [];
     var selectedStation = null;
@@ -151,3 +223,148 @@
         document.getElementById('btnGo').onclick = goNav;
         document.getElementById('btnNext').onclick = function() { findStation(true); };
         document.getElementById('btnCancel').onclick = closeConfirm;
+        document.getElementById('btnSaveStawka').onclick = saveStawka;
+
+        updateUI();
+    };
+
+    function isOpen(hStr) {
+        try {
+            var now = new Date();
+            var current = now.getHours() * 60 + now.getMinutes();
+            var times = hStr.split(' - ').map(function(t) {
+                var p = t.split(':').map(Number);
+                return p[0] * 60 + p[1];
+            });
+            return times[1] < times[0] ? (current >= times[0] || current <= times[1]) : (current >= times[0] && current <= times[1]);
+        } catch(e) { return true; }
+    }
+
+    function findStation(isNext) {
+        var car = document.getElementById('carInput').value.trim().toUpperCase();
+        if (!car) { alert("Wprowadź numer!"); return; }
+        if (!isNext) excludedIds = [];
+
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            var uLat = pos.coords.latitude;
+            var uLon = pos.coords.longitude;
+            var needVac = document.getElementById('checkVacuum').checked;
+            var needWash = document.getElementById('checkWash').checked;
+
+            var filtered = stations.filter(function(s) {
+                return (!needVac || s.vac === 1) && (!needWash || s.wash === 1) && 
+                       excludedIds.indexOf(s.id) === -1 && isOpen(s.hours);
+            });
+
+            if (filtered.length === 0) {
+                alert("Brak stacji spełniających warunki!");
+                if (isNext) closeConfirm();
+                return;
+            }
+
+            selectedStation = filtered.reduce(function(prev, curr) {
+                var d1 = Math.hypot(uLat - prev.lat, uLon - prev.lon);
+                var d2 = Math.hypot(uLat - curr.lat, uLon - curr.lon);
+                return d1 < d2 ? prev : curr;
+            });
+
+            excludedIds.push(selectedStation.id);
+            document.getElementById('confAddress').innerText = selectedStation.addr;
+            document.getElementById('confComent').innerText = selectedStation.com;
+            document.getElementById('confHours').innerText = selectedStation.hours;
+            document.getElementById('confirmScreen').style.display = 'block';
+        }, function() { alert("Włącz GPS w ustawieniach!"); });
+    }
+
+    function goNav() {
+        var car = document.getElementById('carInput').value.trim().toUpperCase();
+        var logs = JSON.parse(localStorage.getItem('logs_final_v14') || "[]");
+        logs.unshift({
+            id: Date.now(), car: car, date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+            baseEarn: holidayMode ? 28 : 21, extra: 0, extraReason: '', station: selectedStation.addr.split(',')[0]
+        });
+        localStorage.setItem('logs_final_v14', JSON.stringify(logs));
+        closeConfirm();
+        updateUI();
+        window.location.href = "https://www.google.com/maps/dir/?api=1&destination=" + selectedStation.lat + "," + selectedStation.lon;
+    }
+
+    function openEdit(id) {
+        if (confirm("Czy na pewno chcesz edytować stawkę?")) {
+            var logs = JSON.parse(localStorage.getItem('logs_final_v14') || "[]");
+            var item = logs.find(function(l) { return l.id === id; });
+            if (item) {
+                activeEditId = id;
+                document.getElementById('editCarNum').innerText = "POJAZD: " + item.car;
+                document.getElementById('inputExtraAmount').value = item.extra || "";
+                document.getElementById('inputExtraReason').value = item.extraReason || "";
+                document.getElementById('editStawkaScreen').style.display = 'block';
+            }
+        }
+    }
+
+    function saveStawka() {
+        var logs = JSON.parse(localStorage.getItem('logs_final_v14') || "[]");
+        var amount = parseInt(document.getElementById('inputExtraAmount').value) || 0;
+        var reason = document.getElementById('inputExtraReason').value.trim();
+        
+        for (var i = 0; i < logs.length; i++) {
+            if (logs[i].id === activeEditId) {
+                logs[i].extra = amount;
+                logs[i].extraReason = reason;
+                break;
+            }
+        }
+        localStorage.setItem('logs_final_v14', JSON.stringify(logs));
+        document.getElementById('editStawkaScreen').style.display = 'none';
+        updateUI();
+    }
+
+    function deleteLog(id) {
+        if (confirm("Usunąć wpis?")) {
+            var logs = JSON.parse(localStorage.getItem('logs_final_v14') || "[]");
+            logs = logs.filter(function(l) { return l.id !== id; });
+            localStorage.setItem('logs_final_v14', JSON.stringify(logs));
+            updateUI();
+        }
+    }
+
+    function closeConfirm() { document.getElementById('confirmScreen').style.display = 'none'; }
+
+    function updateUI() {
+        var logs = JSON.parse(localStorage.getItem('logs_final_v14') || "[]");
+        var today = new Date().toLocaleDateString();
+        var earned = 0;
+        logs.forEach(function(l) { if (l.date === today) earned += l.baseEarn + (l.extra || 0); });
+        
+        document.getElementById('totalCashDisplay').innerText = earned + " PLN";
+        document.getElementById('holidayBadge').style.display = holidayMode ? 'block' : 'none';
+
+        var groups = {};
+        logs.forEach(function(l) { if (!groups[l.date]) groups[l.date] = []; groups[l.date].push(l); });
+
+        var html = '';
+        var dates = Object.keys(groups).sort(function(a, b) { return new Date(b) - new Date(a); });
+        dates.forEach(function(date) {
+            html += '<div class="date-header">' + (date === today ? 'Dzisiaj' : date) + '</div>';
+            groups[date].forEach(function(l) {
+                var total = l.baseEarn + (l.extra || 0);
+                html += '<div class="log-item">' +
+                    '<div class="log-main">' +
+                        '<div><strong>' + l.car + '</strong><br><small>' + l.time + ' • ' + l.station + '</small>' +
+                        (l.extraReason ? '<div class="reason-text">📝 ' + l.extraReason + '</div>' : '') +
+                        '<div class="edit-link" onclick="openEdit(' + l.id + ')">Edytuj Stawkę</div></div>' +
+                        '<div style="display:flex; align-items:center;">' +
+                            '<span class="earn-val">+' + total + '</span>' +
+                            '<span style="color:#CCC; margin-left:15px; font-size:24px; cursor:pointer;" onclick="deleteLog(' + l.id + ')">×</span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+        });
+        document.getElementById('historyList').innerHTML = html;
+    }
+</script>
+</body>
+</html>
